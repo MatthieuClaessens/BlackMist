@@ -1,0 +1,29 @@
+@import "tailwindcss";
+
+@theme {
+  --color-mist-dark: #050505; 
+  --color-mist-blue: #00FFFF;
+}
+
+@layer base {
+  body {
+    @apply bg-mist-dark text-white;
+  }
+}
+
+@keyframes dash {
+  from { stroke-dashoffset: 50; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes scan {
+  from { top: 0%; }
+  to { top: 100%; }
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
