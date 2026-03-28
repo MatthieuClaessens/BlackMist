@@ -5,6 +5,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"time"
 )
 
 func GetTorIP() (string, error) {
@@ -14,6 +15,7 @@ func GetTorIP() (string, error) {
 	}
 
 	client := &http.Client{
+		Timeout: 15 * time.Second,
 		Transport: &http.Transport{
 			Proxy: http.ProxyURL(proxyURL),
 		},
