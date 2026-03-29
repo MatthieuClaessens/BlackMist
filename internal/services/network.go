@@ -10,7 +10,7 @@ import (
 )
 
 func GetTorIP() (string, error) {
-	proxyURL, err := url.Parse("socks5://127.0.0.1:9050")
+	proxyURL, err := url.Parse("socks5h://127.0.0.1:9050")
 	if err != nil {
 		return "", fmt.Errorf("invalid proxy URL: %w", err)
 	}
@@ -37,7 +37,7 @@ func GetTorIP() (string, error) {
 }
 
 func GetTorLatency() (int64, error) {
-	proxyURL, err := url.Parse("socks5://127.0.0.1:9050")
+	proxyURL, err := url.Parse("socks5h://127.0.0.1:9050")
 	if err != nil {
 		return 0, fmt.Errorf("invalid proxy URL: %w", err)
 	}
