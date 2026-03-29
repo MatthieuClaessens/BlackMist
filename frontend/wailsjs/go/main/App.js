@@ -6,6 +6,10 @@ export function CheckIP() {
   return window['go']['main']['App']['CheckIP']();
 }
 
+export function GetPing() {
+  return window['go']['main']['App']['GetPing']();
+}
+
 export function StartTor() {
   return window['go']['main']['App']['StartTor']();
 }

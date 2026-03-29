@@ -6,20 +6,32 @@ export default function HomePage() {
     const [isActive, setIsActive] = useState<boolean>(false);
     const [currentIp, setCurrentIp] = useState<string>("---.---.---.---");
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
+    const [ping, setPing] = useState<number>(0);
 
 
-    useEffect(() => {
-        let interval: number | undefined;
+useEffect(() => {
+        let interval: ReturnType<typeof setInterval> | undefined;
+
+        const fetchStats = async (): Promise<void> => {
+            const [newIp, newPing]: [string, number] = await Promise.all([
+                TorService.getIP(),
+                TorService.getPing()
+            ]);
+            setCurrentIp(newIp);
+            setPing(newPing);
+        };
+
         if (isActive) {
-            TorService.getIP().then(setCurrentIp);
-            interval = window.setInterval(async () => {
-                const ip = await TorService.getIP();
-                setCurrentIp(ip);
-            }, 5000);
+            fetchStats();
+            interval = setInterval(fetchStats, 5000);
         } else {
             setCurrentIp("---.---.---.---");
+            setPing(0);
         }
-        return () => clearInterval(interval);
+
+        return () => {
+            if (interval) clearInterval(interval);
+        };
     }, [isActive]);
 
 const handleToggle = async () => {
@@ -48,6 +60,7 @@ const handleToggle = async () => {
                         onToggle={handleToggle}
                         currentIp={currentIp}
                         isConnecting={isConnecting}
+                        ping={ping}
                     />
                 </div>
             </main>

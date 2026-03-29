@@ -6,9 +6,10 @@ interface ConnectionNodeProps {
     onToggle: () => void;
     currentIp: string;
     isConnecting: boolean;
+    ping: number;
 }
 
-export default function ConnectionNode({ isActive, onToggle, currentIp, isConnecting }: ConnectionNodeProps) {
+export default function ConnectionNode({ isActive, onToggle, currentIp, isConnecting, ping }: ConnectionNodeProps) {
     const statusColor = isActive ? "text-blue-400" : "text-red-500";
 
     return (
@@ -62,7 +63,7 @@ export default function ConnectionNode({ isActive, onToggle, currentIp, isConnec
 
                     <div className="flex items-center gap-1.5">
                         <Wifi size={12} className={isActive ? "text-blue-500" : "text-zinc-400"} />
-                        <span className="text-[11px] font-mono text-zinc-400">{isActive ? "OK" : "--"}</span>
+                        <span className="text-[11px] font-mono text-zinc-400">{isActive && ping > 0 ? `${ping}ms` : "--ms"}</span>
                     </div>
                 </div>
             </div>

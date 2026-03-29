@@ -3,6 +3,8 @@
 
 export function CheckIP():Promise<string>;
 
+export function GetPing():Promise<number>;
+
 export function StartTor():Promise<string>;
 
 export function StopTor():Promise<string>;
