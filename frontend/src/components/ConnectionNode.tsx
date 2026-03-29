@@ -1,15 +1,14 @@
-import { ShieldCheck, Power, Wifi } from "lucide-react";
+import { ShieldCheck, Power, Wifi, Loader2 } from "lucide-react";
 
 
 interface ConnectionNodeProps {
     isActive: boolean;
     onToggle: () => void;
+    currentIp: string;
+    isConnecting: boolean;
 }
 
-const PING = "--";
-
-export default function ConnectionNode({ isActive, onToggle }: ConnectionNodeProps) {
-    const accent = isActive ? "blue" : "red";
+export default function ConnectionNode({ isActive, onToggle, currentIp, isConnecting }: ConnectionNodeProps) {
     const statusColor = isActive ? "text-blue-400" : "text-red-500";
 
     return (
@@ -25,11 +24,11 @@ export default function ConnectionNode({ isActive, onToggle }: ConnectionNodePro
                     </div>
 
                     <h2 className="text-6xl font-light tracking-tighter text-white leading-tight">
-                        {isActive ? "SECURED" : "EXPOSED"}
+                        {isConnecting ? "ROUTING..." : (isActive ? "SECURED" : "EXPOSED")}
                     </h2>
 
                     <p className={`text-[10px] mt-2 tracking-[0.1em] font-medium transition-colors duration-700 ${statusColor}/80`}>
-                        {isActive ? "TOR CIRCUIT ESTABLISHED" : "ENCRYPTION OFF"}
+                        {isConnecting ? "Building Tor Circuits..." : (isActive ? "Tor circuit established" : "Encryption off")}
                     </p>
 
                     <div className={`mt-6 border rounded-xl px-4 py-2 w-fit transition-all duration-500 ${isActive
@@ -39,7 +38,7 @@ export default function ConnectionNode({ isActive, onToggle }: ConnectionNodePro
                         <div className="flex items-center gap-3">
                             <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Address</span>
                             <p className={`text-xs font-mono font-medium tracking-wider ${isActive ? "text-blue-400" : "text-zinc-400"}`}>
-                                12.100.111.00
+                                {currentIp}
                             </p>
                         </div>
                     </div>
@@ -50,19 +49,20 @@ export default function ConnectionNode({ isActive, onToggle }: ConnectionNodePro
                 <div className="flex flex-col items-center gap-4">
                     <button
                         onClick={onToggle}
-                        className="group relative w-20 h-20 flex items-center justify-center cursor-pointer outline-none transition-all active:scale-95"
+                        disabled={isConnecting}
+                        className={`group relative w-20 h-20 flex items-center justify-center cursor-pointer outline-none transition-all active:scale-95 ${isConnecting ? 'cursor-wait opacity-50' : ''}`}
                     >
                         <div className={`absolute inset-0 rounded-full transition-opacity duration-1000 bg-blue-600/10 ${isActive ? "opacity-100" : "opacity-0"}`} />
                         <div className={`absolute inset-0 border rounded-full transition-all duration-700 ${isActive ? "border-blue-500/40 scale-110" : "border-zinc-700 hover:border-zinc-500"}`} />
                         <div className={`relative z-10 w-14 h-14 rounded-full flex items-center justify-center transition-all duration-500 border ${isActive ? "bg-white text-black border-white shadow-xl" : "bg-[#0d0d12] border-white/5 text-zinc-600"
                             }`}>
-                            {isActive ? <ShieldCheck size={20} /> : <Power size={20} />}
+                            {isConnecting ? <Loader2 size={20} className="animate-spin" /> : (isActive ? <ShieldCheck size={20} /> : <Power size={20} />)}
                         </div>
                     </button>
 
                     <div className="flex items-center gap-1.5">
                         <Wifi size={12} className={isActive ? "text-blue-500" : "text-zinc-400"} />
-                        <span className="text-[11px] font-mono text-zinc-400">{isActive ? PING : "--"}ms</span>
+                        <span className="text-[11px] font-mono text-zinc-400">{isActive ? "OK" : "--"}</span>
                     </div>
                 </div>
             </div>
