@@ -2,6 +2,7 @@ package services
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -62,9 +63,24 @@ func (e *TorEngine) WriteConfig() (string, error) {
 	}
 
 	content := fmt.Sprintf(
-		"SocksPort 9050\nControlPort 9051\nDataDirectory \"%s\"\n",
+		"SocksPort 9050\nControlPort 9051\nDataDirectory \"%s\"\nCookieAuthentication 1\n",
 		filepath.ToSlash(dataDir),
 	)
 
 	return configPath, os.WriteFile(configPath, []byte(content), 0644)
+
+}
+
+func (e *TorEngine) NewIdentity() error {
+	conn, err := net.Dial("tcp", "127.0.0.1:9051")
+	if err != nil {
+		return fmt.Errorf("connexion au ControlPort impossible : %v", err)
+	}
+	defer conn.Close()
+
+	fmt.Fprintf(conn, "AUTHENTICATE \"\"\r\n")
+	fmt.Fprintf(conn, "SIGNAL NEWNYM\r\n")
+	fmt.Fprintf(conn, "QUIT\r\n")
+
+	return nil
 }

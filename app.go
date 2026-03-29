@@ -4,7 +4,10 @@ import (
 	"blackmist/internal/services"
 	"context"
 	"fmt"
+	"net"
+	"os"
 	"os/exec"
+	"time"
 )
 
 type App struct {
@@ -26,15 +29,43 @@ func (a *App) startup(ctx context.Context) {
 	services.ToggleSystemProxy(false)
 }
 
+func (a *App) shutdown(ctx context.Context) {
+	a.StopTor()
+}
+
+func waitForTor(port string, timeout time.Duration) error {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		conn, err := net.DialTimeout("tcp", "127.0.0.1:"+port, 1*time.Second)
+		if err == nil {
+			conn.Close()
+			return nil
+		}
+		time.Sleep(500 * time.Millisecond)
+	}
+	return fmt.Errorf("Tor did not start within the allotted time.")
+}
+
 func (a *App) StartTor() (string, error) {
 	if a.active {
 		return "Already active", nil
 	}
 
-	config, _ := a.engine.WriteConfig()
+	config, err := a.engine.WriteConfig()
+	if err != nil {
+		return "", fmt.Errorf("erreur config Tor : %w", err)
+	}
+
 	a.engine.Cmd = exec.Command(a.engine.BinaryPath, "-f", config)
+	a.engine.Cmd.Stdout = os.Stdout
+	a.engine.Cmd.Stderr = os.Stderr
 
 	if err := a.engine.Cmd.Start(); err != nil {
+		return "", err
+	}
+
+	if err := waitForTor("9050", 60*time.Second); err != nil {
+		a.engine.Cmd.Process.Kill()
 		return "", err
 	}
 
@@ -63,4 +94,12 @@ func (a *App) GetPing() int64 {
 		return 0
 	}
 	return latency
+}
+
+func (a *App) ChangeIP() (string, error) {
+	if err := a.engine.NewIdentity(); err != nil {
+		return "", err
+	}
+	time.Sleep(10 * time.Second)
+	return services.GetTorIP()
 }

@@ -7,9 +7,10 @@ export default function HomePage() {
     const [currentIp, setCurrentIp] = useState<string>("---.---.---.---");
     const [isConnecting, setIsConnecting] = useState<boolean>(false);
     const [ping, setPing] = useState<number>(0);
+    const [error, setError] = useState<string | null>(null);
 
 
-useEffect(() => {
+    useEffect(() => {
         let interval: ReturnType<typeof setInterval> | undefined;
 
         const fetchStats = async (): Promise<void> => {
@@ -17,6 +18,7 @@ useEffect(() => {
                 TorService.getIP(),
                 TorService.getPing()
             ]);
+            console.log("IP Reçue:", newIp, "Ping:", newPing);
             setCurrentIp(newIp);
             setPing(newPing);
         };
@@ -34,8 +36,9 @@ useEffect(() => {
         };
     }, [isActive]);
 
-const handleToggle = async () => {
+    const handleToggle = async () => {
         setIsConnecting(true);
+        setError(null);
         try {
             if (!isActive) {
                 await TorService.connect();
@@ -45,24 +48,28 @@ const handleToggle = async () => {
                 setIsActive(false);
             }
         } catch (err) {
-            console.error("Action failed:", err);
+            setError(String(err));
+            console.error("Action failed: ", err)
         } finally {
             setIsConnecting(false);
         }
     };
-        
 
-        return (
-            <main className="h-screen w-screen bg-[#09090f] text-zinc-300 font-sans overflow-hidden flex items-center justify-center p-0 select-none">
-                <div className="w-125 h-80 border border-white/5 bg-[#09090f] flex flex-col relative overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)]">
-                    <ConnectionNode
-                        isActive={isActive}
-                        onToggle={handleToggle}
-                        currentIp={currentIp}
-                        isConnecting={isConnecting}
-                        ping={ping}
-                    />
-                </div>
-            </main>
-        )
-    }
+
+    return (
+        <main className="h-screen w-screen bg-[#09090f] text-zinc-300 font-sans overflow-hidden flex items-center justify-center p-0 select-none">
+            <div className="w-125 h-80 border border-white/5 bg-[#09090f] flex flex-col relative overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)]">
+                <ConnectionNode
+                    isActive={isActive}
+                    onToggle={handleToggle}
+                    currentIp={currentIp}
+                    isConnecting={isConnecting}
+                    ping={ping}
+                />
+                {error && (
+                    <p className="text-red-500 text-xs font-mono absolute bottom-4 left-4">{error}</p>
+                )}
+            </div>
+        </main>
+    )
+}

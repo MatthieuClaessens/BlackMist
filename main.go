@@ -37,6 +37,7 @@ func main() {
 			WindowIsTranslucent:  true,
 		},
 		BackgroundColour: &options.RGBA{R: 0, G: 0, B: 0, A: 0},
+		OnShutdown:       app.shutdown,
 		OnStartup:        app.startup,
 		Bind: []interface{}{
 			app,
