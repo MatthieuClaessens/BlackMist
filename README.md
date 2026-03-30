@@ -32,7 +32,7 @@ The interface, prototyped on **Figma**, focuses on "One-Click Security". It prov
 
 | 🔴 **Mode: Offline (Exposed)** | 🔵 **Mode: Online (Secured)** |
 | :--- | :--- |
-| <a href="https://i.ibb.co/Qv0pgkPz/image.png" target="_blank"><img src="https://i.ibb.co/Qv0pgkPz/image.png" alt="BlackMist exposed mode"></a> | <a href="https://ibb.co/XkvMhpqf" target="_blank"><img src="https://i.ibb.co/TqFdVRsD/image.png" alt="BlackMist secured mode"></a> |
+| <a href="https://i.ibb.co/Qv0pgkPz/image.png" target="_blank"><img src="https://i.ibb.co/Qv0pgkPz/image.png" alt="BlackMist exposed mode"></a> | <a href="https://ibb.co/XkvMhpqf" target="_blank"><img src="https://i.ibb.co/Vb4Lrf0/Capture-d-cran-2026-03-30-222748-1.png" alt="BlackMist secured mode"></a> |
 | *The proxy is disabled. The system IP is exposed (Status: Red).* | *Tor is bootstrapped. System traffic is routed (Status: Blue).* |
 
 > **Pro Tip:** I implemented a **Bootstrap Guard** in Go. The system proxy is only engaged once the Tor circuit reaches **100% connectivity**, preventing any data leaks (DNS or Traffic) during the handshake phase.
